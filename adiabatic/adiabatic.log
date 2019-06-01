@@ -1,0 +1,73 @@
+#Purpose: make a test of the spectral calculation in an adiabatic
+#  expansion case (follow the example in Ji+2006, Sec.3.4):
+#
+#  As an illustration, we consider a toy model for an adiabatically
+#  expanding stellar cluster wind with a constant mass input rate
+#  $\dot{M}\sim3\times10^{-5}\,M_\odot$~yr$^{-1}$ and a constant
+# velocity v = 1000 km~s$^{−1}$. We assume that the wind is injected
+# at an initial radius of $r_0=0.3$~pc and is heated up to a CIE
+# state with an equilibrium temperature $T_0=5\times10^6$~K. As the
+# wind expands adiabatically, its temperature drops as
+#
+#   $T=T_0(r/r_0)^{−4/3}.
+#
+# Because the radial velocity is in a range of 1000-1071 km/s, and
+# the conservation of mass requires that nvr^2 = const, which deduces
+# that the density is dropping as r^-2 outwards. Therefore, a radius
+# array of $\Delta{}r\prop{}r^2$ will provide a similar ionization
+# timescale across the radius.
+
+#0. The analytical model has been checked, as summarized in report
+#   "analytical.pdf". A physical condition file, "adia.exp_phy.info",
+#   is created for following calculations.
+
+#1. Check my spectral calculation CODE!====================
+#1.1.NEI calculation-----------------------------
+#  A python module called "nei_physcalc.py" is created for
+#  this calculation.
+mkdir nei_case; cd ./nei_case/
+cp ../model_check/adia.exp_phy.info ./
+
+# In PYTHON3+++++++++++++++++++++++++++
+#1.1.1.derive the ionic fraction in parallel way
+exec(open("derive_nei_ionfrac.py").read())
+# Time Consuming:1867.35 sec.
+
+#1.1.2.derive the spectrum
+exec(open("derive_nei_spectrum.py").read())
+# Time Consuming:5415.89 sec.
+
+# The ionic fraction file "tionfrac_nei.pkl", and the
+# derived spectra in file "tcspec_nei.pkl", are derived
+# for further comparison in "comp_plot.py".
+
+cd ../
+
+#1.2.CIE calculation-----------------------------
+#  A python module called "cie_physderi.py" is created for
+#  this calculation.
+mkdir cie_case; cd ./cie_case/
+cp ../model_check/adia.exp_phy.info ./
+
+# In PYTHON3+++++++++++++++++++++++++++
+#1.2.1.derive the ionic fraction in parallel way
+exec(open("derive_cie_ionfrac.py").read())
+# Time Consuming: 876.42 sec.
+
+#1.2.2.derive the spectrum
+exec(open("derive_cie_spectrum.py").read())
+# Time Consuming:1287.92 sec.
+
+# The ionic fraction file "tionfrac_cie.pkl", and the
+# derived spectra in file "tcspec_cie.pkl", are derived
+# for further comparison in "comp_plot.py".
+
+cd ../
+
+#1.3.Comparison plot-----------------------------
+# In PYTHON3
+exec(open("comp_plot_ionfrac.py").read())
+exec(open("comp_plot_spectrum.py").read())
+
+# The ionic fraction seems good, but the spectrum comparison
+# is so wierd, that I believe I may have made something wrong.
